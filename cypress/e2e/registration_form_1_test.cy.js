@@ -19,11 +19,14 @@ Assignment 2:
 describe('This is the first test suite, Darya Prokharchyk', () => {
     it('User can submit data only when valid mandatory values are added', () => {
         // September 25th, 2024
+        
         cy.get('[data-testid="phoneNumberTestId"]').type('555666777')
+        cy.get ('#firstName').type('Darya')
+        cy.get ('#lastName').type('Prokharchyk')
         cy.get('input[name="password"]').type('DaryaPass')
         cy.get('[name="confirm"]').type('DaryaPass')
         cy.get('#username').type('Something')
-
+    
         //in order to activate submit button, user has to click somewhere outside the input field
         cy.get('h2').contains('Password').click()
         cy.get('.submit_button').should('be.enabled')
@@ -97,25 +100,66 @@ describe('This is the first test suite, Darya Prokharchyk', () => {
     Assignment 3: add the content to the following tests
     */
 
-    it('User cannot submit data when phone number is absent', () => {
-        // Add test, similar to previous one with phone number field not filled in
-        // All other fields should be entered correctly
-        // Assert that submit button is not enabled and that successful message is not visible
-    })
+it('User cannot submit data when phone number is absent', () => {
+    // Add test, similar to previous one with phone number field not filled in
+    // All other fields should be entered correctly
+    // Assert that submit button is not enabled and that successful message is not 
+    cy.get('#username').type('johnDoe')
+    cy.get('[data-testid="phoneNumberTestId"]').type('10203040')
+    cy.get("input[name='password']").type('Password123')
+    cy.get('[name="confirm"]').type('Password123')
 
-    it('User cannot submit data when password and/or confirmation password is absent', () => {
-        // Add test, similar to previous one with password field not filled in
-        // All other fields should be entered correctly
-        // Assert that submit button is not enabled and that successful message is not visible
-    })
+    // Scroll back to phone number input field
+    cy.get('[data-testid="phoneNumberTestId"]').scrollIntoView()
+    cy.get('[data-testid="phoneNumberTestId"]').clear()
+    cy.get('h2').contains('Password').click()
 
-    it('User cannot add letters to phone number', () => {
-        // Next verification is given as example
-        // how we can check from html code, that phone number should contain only numbers
-        cy.get('[data-testid="phoneNumberTestId"]').should('have.attr', 'type', 'number')
+    // Asserting that Submit button is disabled
+    cy.get('.submit_button').should('be.disabled')
 
-        // Add steps, when all fields are correctly filled in, except phone number
-        // Try typing letters to phone number field
-        // Assert that submit button is not enabled and that successful message is not visible
-    })
+    // Assert that success message is not visible
+    cy.get('#success_message').should('not.be.visible')
+
+    // Assert that correct error message is visible and contains the given text
+    //cy.get('#input_error_message').should('be.visible')
+    //.and('contain', 'Mandatory input field is not valid or empty!')
+
+    // Assert that phone number input has tooltip with error message
+    //cy.get('[data-testid="phoneNumberTestId"]').should('contain', 'Input field')
+
+    // Check error message visibility using CSS or simply be.visible
+    //cy.get('#input_error_message').should('be.visible')
+})
+
+it('User cannot submit data when password and/or confirmation password is absent', () => {
+    // Add test, similar to previous one with password field not filled in
+    // All other fields should be entered correctly
+    // Assert that submit button is not enabled and that successful message is not visible
+    cy.get('#username').type('johnDoe')
+    cy.get('[data-testid="phoneNumberTestId"]').type('10203040')
+    cy.get("input[name='password']")
+        .focus()
+        .blur()
+
+    cy.get('.submit_button').should('be.disabled')
+    cy.get('#success_message').should('not.be.visible')
+    //cy.get('#input_error_message').should('be.visible')
+        //.and('contain', 'Mandatory input field is not valid or empty!')
+
+})
+
+it('User cannot add letters to phone number', () => {
+    cy.get('#username').type('johnDoe')
+    cy.get('[data-testid="phoneNumberTestId"]').type('Cerebrum Hub')
+    cy.get("input[name='password']").type('Password123')
+    cy.get('[name="confirm"]').type('Password123')
+
+    // Next verification is given as example
+    // how we can check from html code, that phone number should contain only numbers
+    cy.get('[data-testid="phoneNumberTestId"]').should('have.attr', 'type', 'number')
+
+    // Assert that submit button is not enabled and that successful message is not visible
+    cy.get('.submit_button').should('be.disabled')
+    cy.get('#success_message').should('not.be.visible')
+})
 })
