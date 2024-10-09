@@ -66,6 +66,23 @@ describe('Section 1: Functional tests', () => {
         cy.get('#input_error_message').should('be.visible').should('contain', 'Mandatory input field is not valid or empty!')
     })
 
+    it('User cannot submit form  when first name is absent', () => {
+        inputValidData('UsernameTest')
+        cy.get('input[name="name"]').clear()
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('be.disabled')
+        cy.get('#success_message').should('not.be.visible')
+        cy.get('#input_error_message').should('be.visible').should('contain', 'Mandatory input field is not valid or empty!')
+    })
+
+    it('User cannot submit form  when last name is absent', () => {
+        inputValidData('UsernameTest')
+        cy.get('#lastName').clear()
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('be.disabled')
+        cy.get('#success_message').should('not.be.visible')
+        cy.get('#input_error_message').should('be.visible').should('contain', 'Mandatory input field is not valid or empty!')
+    })
     it('User cannot submit an empty  form', () => {
         cy.get('.submit_button').should('not.be.enabled');
     })
@@ -116,14 +133,10 @@ describe('Section 2: Visual tests', () => {
         cy.get('input[type="radio"]').next().eq(1).should('have.text', 'CSS')
         cy.get('input[type="radio"]').next().eq(2).should('have.text', 'JavaScript')
         cy.get('input[type="radio"]').next().eq(3).should('have.text', 'PHP')
-
-        //Verification of the default state of the radio buttons
         cy.get('input[type="radio"]').eq(0).should('not.be.checked')
         cy.get('input[type="radio"]').eq(1).should('not.be.checked')
         cy.get('input[type="radio"]').eq(2).should('not.be.checked')
         cy.get('input[type="radio"]').eq(3).should('not.be.checked')
-
-        // Selecting one should remove selection from the other radio button
         cy.get('input[type="radio"]').eq(0).check().should('be.checked')
         cy.get('input[type="radio"]').eq(1).check().should('be.checked')
         cy.get('input[type="radio"]').eq(0).should('not.be.checked')
@@ -137,22 +150,13 @@ describe('Section 2: Visual tests', () => {
         cy.get('input.checkbox').eq(0).should('not.be.checked')
         cy.get('input.checkbox').eq(1).should('not.be.checked')
         cy.get('input.checkbox').eq(2).should('not.be.checked')
-
-        // Selecting one should NOT remove selection from other checkboxes
         cy.get('input.checkbox').eq(0).check().should('be.checked')
         cy.get('input.checkbox').eq(1).check().should('be.checked')
         cy.get('input.checkbox').eq(0).should('be.checked')
     })
 
     it('Car dropdown is correct', () => {
-        cy.get('#cars').select(1).screenshot('Cars drop-down')
-        cy.screenshot('Full page screenshot')
-
         cy.get('#cars').children().should('have.length', 4)
-        // or cy.get('#cars').find('option').should('have.length', 4)
-        cy.get('#cars').find('option').eq(0).should('have.text', 'Volvo')
-
-        // Advanced level how to check the content of the Cars dropdown
         cy.get('#cars').find('option').then(options => {
             const actual = [...options].map(option => option.value)
             expect(actual).to.deep.eq(['volvo', 'saab', 'opel', 'audi'])
